@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Casper | Meal</title>
+  </head>
+  <body onload="place()">
+    <div class="wrapper">
+      <img class="egg" src="img/egg-fried.svg" alt="" />
+      <img class="egg2" src="img/food-tray.png" alt="" />
+      <img class="egg3" src="img/platter.png" alt="" />
+      <img class="egg4" src="img/pizza.png" alt="" />
+      <img class="egg5" src="img/hot-dog.png" alt="" />
+      <img class="egg6" src="img/fork.png" alt="" />
+      <nav>
+        <div class="webLogo" id="navclick">
+          <h1>
+            <span class="col2">C</span>asper's <span class="col2">M</span>eals
+          </h1>
+        </div>
+        <div class="midNav" id="menu">
+          <div class="part" onclick="place()">THIS WEEK</div>
+          <div class="part" onclick="gen()">GENERATE MEALS</div>
+          <div class="part" onclick="genall()">ALL MEALS</div>
+        </div>
+        <div class="rightNav">
+          <a href="winkelmand.html">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-bag-dash"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.5 10a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5z"
+              />
+              <path
+                d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"
+              />
+            </svg>
+          </a>
+        </div>
+      </nav>
+      <div class="content">
+        <div class="aldata" id="aldata"></div>
+        <img class="chef" src="" alt="" />
+      </div>
+      <footer>©chefCasperDeBock</footer>
+    </div>
+  </body>
+  <script>
+    var count = 1;
+    var menu = document.getElementById("menu");
+    menu.classList.add("verstop");
+    document.getElementById("navclick").addEventListener("click", () => {
+      if (count % 2 == 0) {
+        menu.classList.add("verstop");
+        menu.classList.remove("toon");
+      } else {
+        menu.classList.add("toon");
+        menu.classList.remove("verstop");
+      }
+      count++;
+    });
+  </script>
+  <script>
+    var geplaatst = 0;
+    function genall() {
+      deletegeplaatsteja();
+      geplaatst = 0;
+      var tag = document.getElementById("aldata");
+      var counter = 0;
+      fetch("https://backendformyap.herokuapp.com/api/maaltijden")
+        .then((response) => response.json())
+
+        .then((data) =>
+          data.forEach((el) => {
+            console.log(el);
+            var newDiv = document.createElement("div");
+            newDiv.setAttribute("id", counter);
+            var text = document.createTextNode(el["name"]);
+            newDiv.appendChild(text);
+            tag.appendChild(newDiv);
+            counter++;
+            geplaatst++;
+          })
+        );
+    }
+
+    function gen() {
+      fetch(
+        "https://backendformyap.herokuapp.com/api/maaltijden/generateweekly",
+        {
+          method: "POST",
+        }
+      ).then(place());
+    }
+
+    function deletegeplaatsteja() {
+      console.log(geplaatst);
+      for (let i = 0; i < geplaatst; i++) {
+        var el = document.getElementById(i);
+        el.remove();
+      }
+    }
+    function place() {
+      deletegeplaatsteja();
+      geplaatst = 0;
+      var tag = document.getElementById("aldata");
+      var counter = 0;
+      fetch("https://backendformyap.herokuapp.com/api/weekly")
+        .then((response) => response.json())
+
+        .then((data) =>
+          data.forEach((el) => {
+            console.log(el);
+            var newDiv = document.createElement("div");
+            newDiv.setAttribute("id", counter);
+            var text = document.createTextNode(el["name"]);
+            newDiv.appendChild(text);
+            tag.appendChild(newDiv);
+            counter++;
+            geplaatst++;
+          })
+        );
+    }
+  </script>
+</html>
